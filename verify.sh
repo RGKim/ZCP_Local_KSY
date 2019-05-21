@@ -1,10 +1,66 @@
 #!/bin/bash
+mkdir -p ~/zcp-verification
+
+###### Count ###### 
+kubectl get images --all-namespaces >> ~/zcp-verification/private_docker_registry.log
+Docker_l=$(cat ~/zcp-verification/private_docker_registry.log | wc -l)
+Docker_l=$((Docker_l-1))
+
+cloudctl catalog charts -s >> ~/zcp-verification/helm_chart.log
+Catalog=$(cat ~/zcp-verification/helm_chart.log | wc -l)
+Catalog=$((Catalog-1))
+
+kubectl get ds --all-namespaces >> ~/zcp-verification/daemonset.log
+DaemonSet=$(cat ~/zcp-verification/daemonset.log | wc -l)
+DaemonSet=$((DaemonSet-1))
+
+
+kubectl get deploy --all-namespaces >> ~/zcp-verification/deployment.log
+Deployment=$(cat ~/zcp-verification/deployment.log | wc -l)
+Deployment=$((Deployment-1))
+
+helm list --tls >> ~/zcp-verification/helm_release.log
+helm_release=$(cat ~/zcp-verification/helm_release.log | wc -l)
+helm_release=$((helm_release-1))
+
+kubectl get job --all-namespaces >> ~/zcp-verification/job.log
+Jobs=$(cat ~/zcp-verification/job.log | wc -l)
+Jobs=$((Jobs-1))
+
+kubectl get cronjob --all-namespaces >> ~/zcp-verification/cronjob.log
+CronJob=$(cat ~/zcp-verification/cronjob.log | wc -l)
+CronJob=$((CronJob-1))
+
+kubectl get sts --all-namespaces >> ~/zcp-verification/statefulset.log
+StatefulSet=$(cat ~/zcp-verification/statefulset.log | wc -l)
+StatefulSet=$((StatefulSet-1))
+
+kubectl get rs --all-namespaces >> ~/zcp-verification/replicaset.log
+ReplicaSet=$(cat ~/zcp-verification/replicaset.log | wc -l)
+ReplicaSet=$((ReplicaSet-1))
+
+kubectl get svc --all-namespaces >> ~/zcp-verification/services.log
+Services=$(cat ~/zcp-verification/services.log | wc -l)
+Services=$((Services-1))
+
+kubectl get ing --all-namespaces >> ~/zcp-verification/ingress.log
+Ingress=$(cat ~/zcp-verification/ingress.log | wc -l)
+Ingress=$((Ingress-1))
+
+kubectl get cm --all-namespaces >> ~/zcp-verification/configmaps.log
+ConfigMaps=$(cat ~/zcp-verification/configmaps.log | wc -l)
+ConfigMaps=$((ConfigMaps-1))
+
+kubectl get hpa --all-namespaces >> ~/zcp-verification/scaling_policies.log
+ScalingPolicies=$(cat ~/zcp-verification/scaling_policies.log | wc -l)
+ScalingPolicies=$((ScalingPolicies-1))
+
+kubectl get secrets --all-namespaces >> ~/zcp-verification/secrets.log
+Secret=$(cat ~/zcp-verification/secrets.log | wc -l)
+Secret=$((Secret-1))
 
 ###### DaemonSet ###### 
-kubectl get ds --all-namespaces >> output.txt
-sed "1d" output.txt >> out.txt
-
-rm -rf output.txt
+sed "1d" ~/zcp-verification/daemonset.log >> out.txt
 
 echo -e "\t\033[33m"============ CHECK  DaemonSet ============"\033[0m"
 ds_error=0
@@ -40,10 +96,7 @@ rm -rf out.txt
 
 
 ###### Deployment ######
-kubectl get deploy --all-namespaces >> output.txt
-sed "1d" output.txt >> out.txt
-
-rm -rf output.txt
+sed "1d" ~/zcp-verification/deployment.log >> out.txt
 
 echo -e "\t\033[33m"=========== CHECK  Deployment ==========="\033[0m"
 deploy_error=0
@@ -72,10 +125,7 @@ rm -rf out.txt
 
 
 ###### Helm Release ###### 
-helm list --tls >> output.txt
-sed "1d" output.txt >> out.txt
-
-rm -rf output.txt
+sed "1d" ~/zcp-verification/helm_release.log >> out.txt
 
 echo -e "\t\033[33m"========== CHECK Helm release =========="\033[0m"
 helm_error=0
@@ -95,13 +145,11 @@ done < out.txt
 echo " "
 rm -rf out.txt
 
+
 ###### Job ###### 
-kubectl get job --all-namespaces >> output.txt
-sed "1d" output.txt >> out.txt
+sed "1d" ~/zcp-verification/job.log >> out.txt
 
-rm -rf output.txt
-
-echo -e "\t\033[33m"=================== CHECK Job ==================="\033[0m"
+echo -e "\t\033[33m"=================== CHECK Jobs ==================="\033[0m"
 job_error=0
 
 while read line; do
@@ -119,11 +167,9 @@ done < out.txt
 echo " "
 rm -rf out.txt
 
-###### StatefulSet ###### 
-kubectl get sts --all-namespaces >> output.txt
-sed "1d" output.txt >> out.txt
 
-rm -rf output.txt
+###### StatefulSet ###### 
+sed "1d" ~/zcp-verification/statefulset.log >> out.txt
 
 echo -e "\t\033[33m"=============== CHECK StatefulSet ==============="\033[0m"
 sts_error=0
@@ -144,11 +190,9 @@ done < out.txt
 echo " "
 rm -rf out.txt
 
-###### ReplicaSet ###### 
-kubectl get rs --all-namespaces >> output.txt
-sed "1d" output.txt >> out.txt
 
-rm -rf output.txt
+###### ReplicaSet ###### 
+sed "1d" ~/zcp-verification/replicaset.log >> out.txt
 
 echo -e "\t\033[33m"================ CHECK  ReplicaSet ==============="\033[0m"
 rs_error=0
@@ -177,44 +221,65 @@ rm -rf out.txt
 
 
 ##### RESULT #####
-echo -e "\033[33m"===================================="\033[0m"
-printf "\033[33m\t%s\n\033[0m" "Verification Result"
-echo -e "\033[33m"===================================="\033[0m"
+echo -e "\033[33m"======================================"\033[0m"
+printf "\033[33m%s\n\033[0m" "  Verification Result(Resource Count)"
+echo -e "\033[33m"======================================"\033[0m"
+printf "%-30s\033[32m %d\n\033[0m" "Private Docker Registry" "$Docker_l"
+printf "%-30s\033[32m %d\n\033[0m" "Helm Chart(Catalog)" "$Catalog"
+printf "%-30s\033[32m %d\n\033[0m" "DaemonSet" "$DaemonSet"
+printf "%-30s\033[32m %d\n\033[0m" "Deployment" "$Deployment"
+printf "%-30s\033[32m %d\n\033[0m" "Helm Release" "$helm_release"
+printf "%-30s\033[32m %d\n\033[0m" "Jobs" "$Jobs"
+printf "%-30s\033[32m %d\n\033[0m" "CronJob" "$CronJob"
+printf "%-30s\033[32m %d\n\033[0m" "StatefulSet" "$StatefulSet"
+printf "%-30s\033[32m %d\n\033[0m" "ReplicaSet" "$ReplicaSet"
+printf "%-30s\033[32m %d\n\033[0m" "Services" "$Services"
+printf "%-30s\033[32m %d\n\033[0m" "Ingress" "$Ingress"
+printf "%-30s\033[32m %d\n\033[0m" "ConfigMaps" "$ConfigMaps"
+printf "%-30s\033[32m %d\n\033[0m" "Scaling Policies" "$ScalingPolicies"
+printf "%-30s\033[32m %d\n\033[0m" "Secret" "$Secret"
+echo " "
+
+echo -e "\033[33m"======================================"\033[0m"
+printf "\033[33m%s\n\033[0m" "   Verification Result(Status Check)"
+echo -e "\033[33m"======================================"\033[0m"
 if [ $ds_error == 0 ]; then
-    echo -e DaemonSet"\t\t\033[32m"OK"\033[0m"
+    printf "%-30s\033[32m %s\n\033[0m" "DaemonSet" "OK"
 else
-    echo -e DaemonSet"\t\t\033[31m"NOT OK"\033[0m"
+    printf "%-30s\033[31m %s\n\033[0m" "DaemonSet" "NOT OK"
 fi;
 
 if [ $deploy_error == 0 ]; then
-    echo -e Deployment"\t\t\033[32m"OK"\033[0m"
+    printf "%-30s\033[32m %s\n\033[0m" "Deployment" "OK"
 else
-    echo -e Deployment"\t\t\033[31m"NOT OK"\033[0m"
+    printf "%-30s\033[31m %s\n\033[0m" "Deployment" "NOT OK"
 fi;
 
 if [ $helm_error == 0 ]; then
-    echo -e Helm release"\t\t\033[32m"OK"\033[0m"
+    printf "%-30s\033[32m %s\n\033[0m" "Helm release" "OK"
 else
-    echo -e Helm release"\t\t\033[31m"NOT OK"\033[0m"
+    printf "%-30s\033[31m %s\n\033[0m" "Helm release" "NOT OK"
 fi;
 
 if [ $job_error == 0 ]; then
-    echo -e Job"\t\t\t\033[32m"OK"\033[0m"
+    printf "%-30s\033[32m %s\n\033[0m" "Jobs" "OK"
 else
-    echo -e Job"\t\t\t\033[31m"NOT OK"\033[0m"
+    printf "%-30s\033[31m %s\n\033[0m" "Jobs" "NOT OK"
 fi;
 
 if [ $sts_error == 0 ]; then
-    echo -e StatefulSet"\t\t\033[32m"OK"\033[0m"
+    printf "%-30s\033[32m %s\n\033[0m" "StatefulSet" "OK"
 else
-    echo -e StatefulSet"\t\t\033[31m"NOT OK"\033[0m"
+    printf "%-30s\033[31m %s\n\033[0m" "StatefulSet" "NOT OK"
 fi;
 
 if [ $rs_error == 0 ]; then
-    echo -e ReplicaSet"\t\t\033[32m"OK"\033[0m"
+   printf "%-30s\033[32m %s\n\033[0m" "ReplicaSet" "OK"
 else
-    echo -e ReplicaSet"\t\t\033[31m"NOT OK"\033[0m"
+    printf "%-30s\033[31m %s\n\033[0m" "ReplicatSet" "NOT OK"
 fi;
 echo " "
 
-
+echo -e "\033[33m"--------------------------------------"\033[0m"
+printf "\033[33m%s\n\033[0m" "for more details '~/zcp_verification/'"
+echo -e "\033[33m"--------------------------------------"\033[0m"
