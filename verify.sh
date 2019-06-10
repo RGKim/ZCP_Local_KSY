@@ -1,66 +1,82 @@
 #!/bin/bash
-mkdir -p ~/zcp-verification
 
-###### Count ###### 
-kubectl get images --all-namespaces >> ~/zcp-verification/private_docker_registry.log
-Docker_l=$(cat ~/zcp-verification/private_docker_registry.log | wc -l)
+datetime=`date +%Y%m%d`
+
+DIR=~/zcp-verification/$datetime
+mkdir -p $DIR
+
+
+
+###### Count ######
+kubectl get images --all-namespaces >> $DIR/private_docker_registry.log
+Docker_l=$(cat $DIR/private_docker_registry.log | wc -l)
 Docker_l=$((Docker_l-1))
 
-cloudctl catalog charts -s >> ~/zcp-verification/helm_chart.log
-Catalog=$(cat ~/zcp-verification/helm_chart.log | wc -l)
+
+cloudctl catalog charts -s >> $DIR/helm_chart.log
+Catalog=$(cat $DIR/helm_chart.log | wc -l)
 Catalog=$((Catalog-1))
 
-kubectl get ds --all-namespaces >> ~/zcp-verification/daemonset.log
-DaemonSet=$(cat ~/zcp-verification/daemonset.log | wc -l)
+kubectl get ns >> $DIR/namespaces.log
+Namespace=$(cat $DIR/pod.log | wc -l)
+Namespace=$((Pod-1))
+
+kubectl get pod --all-namespaces >> $DIR/pod.log
+Pod=$(cat $DIR/pod.log | wc -l)
+Pod=$((Pod-1))
+
+kubectl get ds --all-namespaces >> $DIR/daemonset.log
+DaemonSet=$(cat $DIR/daemonset.log | wc -l)
 DaemonSet=$((DaemonSet-1))
 
 
-kubectl get deploy --all-namespaces >> ~/zcp-verification/deployment.log
-Deployment=$(cat ~/zcp-verification/deployment.log | wc -l)
+kubectl get deploy --all-namespaces >> $DIR/deployment.log
+Deployment=$(cat $DIR/deployment.log | wc -l)
 Deployment=$((Deployment-1))
 
-helm list --tls >> ~/zcp-verification/helm_release.log
-helm_release=$(cat ~/zcp-verification/helm_release.log | wc -l)
+helm list --tls >> $DIR/helm_release.log
+helm_release=$(cat $DIR/helm_release.log | wc -l)
 helm_release=$((helm_release-1))
 
-kubectl get job --all-namespaces >> ~/zcp-verification/job.log
-Jobs=$(cat ~/zcp-verification/job.log | wc -l)
+kubectl get job --all-namespaces >> $DIR/job.log
+Jobs=$(cat $DIR/job.log | wc -l)
 Jobs=$((Jobs-1))
 
-kubectl get cronjob --all-namespaces >> ~/zcp-verification/cronjob.log
-CronJob=$(cat ~/zcp-verification/cronjob.log | wc -l)
+kubectl get cronjob --all-namespaces >> $DIR/cronjob.log
+CronJob=$(cat $DIR/cronjob.log | wc -l)
 CronJob=$((CronJob-1))
 
-kubectl get sts --all-namespaces >> ~/zcp-verification/statefulset.log
-StatefulSet=$(cat ~/zcp-verification/statefulset.log | wc -l)
+kubectl get sts --all-namespaces >> $DIR/statefulset.log
+StatefulSet=$(cat $DIR/statefulset.log | wc -l)
 StatefulSet=$((StatefulSet-1))
 
-kubectl get rs --all-namespaces >> ~/zcp-verification/replicaset.log
-ReplicaSet=$(cat ~/zcp-verification/replicaset.log | wc -l)
+kubectl get rs --all-namespaces >> $DIR/replicaset.log
+ReplicaSet=$(cat $DIR/replicaset.log | wc -l)
 ReplicaSet=$((ReplicaSet-1))
 
-kubectl get svc --all-namespaces >> ~/zcp-verification/services.log
-Services=$(cat ~/zcp-verification/services.log | wc -l)
+kubectl get svc --all-namespaces >> $DIR/services.log
+Services=$(cat $DIR/services.log | wc -l)
 Services=$((Services-1))
 
-kubectl get ing --all-namespaces >> ~/zcp-verification/ingress.log
-Ingress=$(cat ~/zcp-verification/ingress.log | wc -l)
+kubectl get ing --all-namespaces >> $DIR/ingress.log
+Ingress=$(cat $DIR/ingress.log | wc -l)
 Ingress=$((Ingress-1))
 
-kubectl get cm --all-namespaces >> ~/zcp-verification/configmaps.log
-ConfigMaps=$(cat ~/zcp-verification/configmaps.log | wc -l)
+kubectl get cm --all-namespaces >> $DIR/configmaps.log
+ConfigMaps=$(cat $DIR/configmaps.log | wc -l)
 ConfigMaps=$((ConfigMaps-1))
 
-kubectl get hpa --all-namespaces >> ~/zcp-verification/scaling_policies.log
-ScalingPolicies=$(cat ~/zcp-verification/scaling_policies.log | wc -l)
+kubectl get hpa --all-namespaces >> $DIR/scaling_policies.log
+ScalingPolicies=$(cat $DIR/scaling_policies.log | wc -l)
 ScalingPolicies=$((ScalingPolicies-1))
 
-kubectl get secrets --all-namespaces >> ~/zcp-verification/secrets.log
-Secret=$(cat ~/zcp-verification/secrets.log | wc -l)
+kubectl get secrets --all-namespaces >> $DIR/secrets.log
+Secret=$(cat $DIR/secrets.log | wc -l)
 Secret=$((Secret-1))
 
-###### DaemonSet ###### 
-sed "1d" ~/zcp-verification/daemonset.log >> out.txt
+###### DaemonSet ######
+sed "1d" $DIR/daemonset.log >> out.txt
+
 
 echo -e "\t\033[33m"============ CHECK  DaemonSet ============"\033[0m"
 ds_error=0
@@ -71,11 +87,11 @@ while read line; do
     export READY=$(echo $line | awk '{print $5;}')
     export AVAILABLE=$(echo $line | awk '{print $7;}')
 
-    if [ $DESIRED == $CURRENT ]; then 
+    if [ $DESIRED == $CURRENT ]; then
         if [ $CURRENT == $READY ]; then
             if [ $READY == $AVAILABLE ]; then
                 #echo -e $(echo $line | awk '{print $2;}') is "\033[32m"READY"\033[0m";
-                printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY" 
+                printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
             else
                 #echo -e $(echo $line | awk '{print $2;}') is "\033[31m"NOT READY"\033[0m";
                 printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
@@ -89,14 +105,15 @@ while read line; do
         printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
         ((ds_error++));
     fi;
-   
+
 done < out.txt
 echo " "
 rm -rf out.txt
 
 
 ###### Deployment ######
-sed "1d" ~/zcp-verification/deployment.log >> out.txt
+sed "1d" $DIR/deployment.log >> out.txt
+
 
 echo -e "\t\033[33m"=========== CHECK  Deployment ==========="\033[0m"
 deploy_error=0
@@ -107,9 +124,9 @@ while read line; do
     export CURRENT=$(echo $line | awk '{print $4;}')
     export AVAILABLE=$(echo $line | awk '{print $6;}')
 
-    if [ $DESIRED == $CURRENT ]; then 
+    if [ $DESIRED == $CURRENT ]; then
         if [ $CURRENT == $AVAILABLE ]; then
-            printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY" 
+            printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
         else
             printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
             ((deploy++));
@@ -118,14 +135,14 @@ while read line; do
         printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
         ((deploy++));
     fi;
-   
+
 done < out.txt
 echo " "
 rm -rf out.txt
 
+###### Helm Release ######
+sed "1d" $DIR/helm_release.log >> out.txt
 
-###### Helm Release ###### 
-sed "1d" ~/zcp-verification/helm_release.log >> out.txt
 
 echo -e "\t\033[33m"========== CHECK Helm release =========="\033[0m"
 helm_error=0
@@ -134,20 +151,20 @@ while read line; do
     export NAME=$(echo $line | awk '{print $1;}')
     export STATUS=$(echo $line | awk '{print $8;}')
 
-    if [ "$STATUS" = "DEPLOYED" ]; then 
+    if [ "$STATUS" = "DEPLOYED" ]; then
         printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
     else
         printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
         ((helm_error++))
     fi;
-   
+
 done < out.txt
 echo " "
 rm -rf out.txt
 
+###### Job ######
+sed "1d" $DIR/job.log >> out.txt
 
-###### Job ###### 
-sed "1d" ~/zcp-verification/job.log >> out.txt
 
 echo -e "\t\033[33m"=================== CHECK Jobs ==================="\033[0m"
 job_error=0
@@ -156,20 +173,20 @@ while read line; do
     export NAME=$(echo $line | awk '{print $2;}')
     export COMPLETIONS=$(echo $line | awk '{print $3;}')
 
-    if [ "$COMPLETIONS" = "1/1" ]; then 
+    if [ "$COMPLETIONS" = "1/1" ]; then
         printf "%-60s\033[32m %s\n\033[0m" "$NAME" "READY"
     else
         printf "%-60s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
         ((job_error++));
     fi;
-   
+
 done < out.txt
 echo " "
 rm -rf out.txt
 
+###### StatefulSet ######
+sed "1d" $DIR/statefulset.log >> out.txt
 
-###### StatefulSet ###### 
-sed "1d" ~/zcp-verification/statefulset.log >> out.txt
 
 echo -e "\t\033[33m"=============== CHECK StatefulSet ==============="\033[0m"
 sts_error=0
@@ -179,20 +196,20 @@ while read line; do
     export DESIRED=$(echo $line | awk '{print $3;}')
     export CURRENT=$(echo $line | awk '{print $4;}')
 
-    if [ $DESIRED == $CURRENT ]; then 
+    if [ $DESIRED == $CURRENT ]; then
         printf "%-60s\033[32m %s\n\033[0m" "$NAME" "READY"
     else
         printf "%-60s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
         ((sts_error++));
     fi;
-   
+
 done < out.txt
 echo " "
 rm -rf out.txt
 
+###### ReplicaSet ######
+sed "1d" $DIR/replicaset.log >> out.txt
 
-###### ReplicaSet ###### 
-sed "1d" ~/zcp-verification/replicaset.log >> out.txt
 
 echo -e "\t\033[33m"================ CHECK  ReplicaSet ==============="\033[0m"
 rs_error=0
@@ -203,7 +220,7 @@ while read line; do
     export CURRENT=$(echo $line | awk '{print $4;}')
     export READY=$(echo $line | awk '{print $5;}')
 
-    if [ $DESIRED == $CURRENT ]; then 
+    if [ $DESIRED == $CURRENT ]; then
         if [ $CURRENT == $READY ]; then
             printf "%-60s\033[32m %s\n\033[0m" "$NAME" "READY"
         else
@@ -214,11 +231,10 @@ while read line; do
         printf "%-60s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
         ((rs_error++));
     fi;
-   
+
 done < out.txt
 echo " "
 rm -rf out.txt
-
 
 ##### RESULT #####
 echo -e "\033[33m"======================================"\033[0m"
@@ -283,3 +299,5 @@ echo " "
 echo -e "\033[33m"--------------------------------------"\033[0m"
 printf "\033[33m%s\n\033[0m" "for more details '~/zcp_verification/'"
 echo -e "\033[33m"--------------------------------------"\033[0m"
+
+
