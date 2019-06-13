@@ -1,8 +1,6 @@
 #!/bin/bash
 
-
 tar -xvzf ./icp-openldap-0.1.5.tgz
-
 
 helm install --name=openldap --namespace default icp-openldap --tls
 
@@ -16,4 +14,3 @@ cloudctl iam ldap-create ldap --basedn "dc=local,dc=io" --binddn "cn=admin,dc=lo
 
 
 cloudctl iam team-create test
-cloudctl iam team-add-users test Viewer -u user1,user2,user3

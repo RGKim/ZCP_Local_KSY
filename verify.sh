@@ -12,14 +12,13 @@ kubectl get images --all-namespaces >> $DIR/private_docker_registry.log
 Docker_l=$(cat $DIR/private_docker_registry.log | wc -l)
 Docker_l=$((Docker_l-1))
 
-
 cloudctl catalog charts -s >> $DIR/helm_chart.log
 Catalog=$(cat $DIR/helm_chart.log | wc -l)
 Catalog=$((Catalog-1))
 
 kubectl get ns >> $DIR/namespaces.log
-Namespace=$(cat $DIR/pod.log | wc -l)
-Namespace=$((Pod-1))
+Namespace=$(cat $DIR/namespaces.log | wc -l)
+Namespace=$((Namespace-1))
 
 kubectl get pod --all-namespaces >> $DIR/pod.log
 Pod=$(cat $DIR/pod.log | wc -l)
@@ -77,7 +76,6 @@ Secret=$((Secret-1))
 ###### DaemonSet ######
 sed "1d" $DIR/daemonset.log >> out.txt
 
-
 echo -e "\t\033[33m"============ CHECK  DaemonSet ============"\033[0m"
 ds_error=0
 while read line; do
@@ -114,7 +112,6 @@ rm -rf out.txt
 ###### Deployment ######
 sed "1d" $DIR/deployment.log >> out.txt
 
-
 echo -e "\t\033[33m"=========== CHECK  Deployment ==========="\033[0m"
 deploy_error=0
 
@@ -143,7 +140,6 @@ rm -rf out.txt
 ###### Helm Release ######
 sed "1d" $DIR/helm_release.log >> out.txt
 
-
 echo -e "\t\033[33m"========== CHECK Helm release =========="\033[0m"
 helm_error=0
 
@@ -164,7 +160,6 @@ rm -rf out.txt
 
 ###### Job ######
 sed "1d" $DIR/job.log >> out.txt
-
 
 echo -e "\t\033[33m"=================== CHECK Jobs ==================="\033[0m"
 job_error=0
@@ -187,7 +182,6 @@ rm -rf out.txt
 ###### StatefulSet ######
 sed "1d" $DIR/statefulset.log >> out.txt
 
-
 echo -e "\t\033[33m"=============== CHECK StatefulSet ==============="\033[0m"
 sts_error=0
 
@@ -209,7 +203,6 @@ rm -rf out.txt
 
 ###### ReplicaSet ######
 sed "1d" $DIR/replicaset.log >> out.txt
-
 
 echo -e "\t\033[33m"================ CHECK  ReplicaSet ==============="\033[0m"
 rs_error=0
