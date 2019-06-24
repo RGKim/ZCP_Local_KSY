@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: psptest
+spec:
+  privileged: true
+  allowedCapabilities:
+  - 'NET_ADMIN'
+  fsGroup:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+  - '*'
+ 
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: psptest
+rules:
+- apiGroups:
+  - extensions
+  resourceNames:
+  - psptest
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+ 
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: psptest
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: psptest
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: sock-shop

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-datetime=`date +%Y%m%d`
+datetime=`date +%Y%m%d%H%M`
 
 DIR=~/zcp-verification/$datetime
 mkdir -p $DIR
