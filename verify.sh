@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo -e "Cluster Master IP: "
+read url
+
+cloudctl login -a https://$url:8443 --skip-ssl-validation
+
 datetime=`date +%Y%m%d%H%M`
 
 DIR=~/zcp-verification/$datetime
@@ -126,11 +131,11 @@ while read line; do
             printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
         else
             printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
-            ((deploy++));
+            ((deploy_error++));
         fi;
     else
         printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
-        ((deploy++));
+        ((deploy_error++));
     fi;
 
 done < out.txt
