@@ -1,15 +1,19 @@
 #!/bin/bash
 
+kubectl version -o json | sed '4d' >> version.json
+version=$(cat version.json | grep -i minor | awk -F '"' '{print $4}')
+
+rm -rf version.json
+
 echo -n "Cluster Master IP: "
 read url
 
 cloudctl login -a https://$url:8443 --skip-ssl-validation
 
-datetime=`date +%Y%m%d-%H%M`
+datetime=`date +%Y%m%d-%H%M%S`
 
 DIR=~/zcp-verification/$datetime
 mkdir -p $DIR
-
 
 
 ###### Count ######
@@ -114,31 +118,55 @@ echo " "
 rm -rf out.txt
 
 
-###### Deployment ######
+###### Deployment ###### Version Check
 sed "1d" $DIR/deployment.log >> out.txt
 
 echo -e "\t\033[33m"=========== CHECK  Deployment ==========="\033[0m"
 deploy_error=0
 
-while read line; do
-    export NAME=$(echo $line | awk '{print $2;}')
-    export DESIRED=$(echo $line | awk '{print $3;}')
-    export CURRENT=$(echo $line | awk '{print $4;}')
-    export AVAILABLE=$(echo $line | awk '{print $6;}')
+if [ $version == 12 ]; then
+    while read line; do
+        export NAME=$(echo $line | awk '{print $2;}')
+        export DESIRED=$(echo $line | awk '{print $3;}')
+        export CURRENT=$(echo $line | awk '{print $4;}')
+        export AVAILABLE=$(echo $line | awk '{print $6;}')
 
-    if [ $DESIRED == $CURRENT ]; then
-        if [ $CURRENT == $AVAILABLE ]; then
-            printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
+        if [ $DESIRED == $CURRENT ]; then
+            if [ $CURRENT == $AVAILABLE ]; then
+                printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
+            else
+                printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
+                ((deploy_error++));
+            fi;
         else
             printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
             ((deploy_error++));
         fi;
-    else
-        printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
-        ((deploy_error++));
-    fi;
 
-done < out.txt
+    done < out.txt
+elif [ $version == 13 ]; then
+    while read line; do
+        export NAME=$(echo $line | awk '{print $2;}')
+        export DESIRED=$(echo $line | awk '{print $3;}' | cut -f 1 -d'/')
+        export CURRENT=$(echo $line | awk '{print $3;}' | cut -f 2 -d'/')
+        export AVAILABLE=$(echo $line | awk '{print $5;}')
+
+        if [ $DESIRED == $CURRENT ]; then
+            if [ $CURRENT == $AVAILABLE ]; then
+                printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
+            else
+                printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
+                ((deploy_error++));
+            fi;
+        else
+            printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
+            ((deploy_error++));
+        fi;
+
+    done < out.txt
+else
+    printf "%-50s\033[31m %s\n\033[0mUnsupported Kubernetes Version"
+fi;
 echo " "
 rm -rf out.txt
 
@@ -184,25 +212,42 @@ done < out.txt
 echo " "
 rm -rf out.txt
 
-###### StatefulSet ######
+###### StatefulSet ###### version check
 sed "1d" $DIR/statefulset.log >> out.txt
 
 echo -e "\t\033[33m"=============== CHECK StatefulSet ==============="\033[0m"
 sts_error=0
+if [ $version == 12 ]; then
+    while read line; do
+        export NAME=$(echo $line | awk '{print $2;}')
+        export DESIRED=$(echo $line | awk '{print $3;}')
+        export CURRENT=$(echo $line | awk '{print $4;}')
 
-while read line; do
-    export NAME=$(echo $line | awk '{print $2;}')
-    export DESIRED=$(echo $line | awk '{print $3;}')
-    export CURRENT=$(echo $line | awk '{print $4;}')
+        if [ $DESIRED == $CURRENT ]; then
+            printf "%-60s\033[32m %s\n\033[0m" "$NAME" "READY"
+        else
+            printf "%-60s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
+            ((sts_error++));
+        fi;
 
-    if [ $DESIRED == $CURRENT ]; then
-        printf "%-60s\033[32m %s\n\033[0m" "$NAME" "READY"
-    else
-        printf "%-60s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
-        ((sts_error++));
-    fi;
+    done < out.txt
+elif [ $version == 13 ]; then
+    while read line; do
+        export NAME=$(echo $line | awk '{print $2;}')
+        export DESIRED=$(echo $line | awk '{print $3;}' | cut -f 1 -d'/')
+        export CURRENT=$(echo $line | awk '{print $3;}' | cut -f 2 -d'/')
 
-done < out.txt
+        if [ $DESIRED == $CURRENT ]; then
+            printf "%-60s\033[32m %s\n\033[0m" "$NAME" "READY"
+        else
+            printf "%-60s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
+            ((sts_error++));
+        fi;
+
+    done < out.txt
+else
+    printf "%-50s\033[31m %s\n\033[0mUnsupported Kubernetes Version"
+fi;
 echo " "
 rm -rf out.txt
 
@@ -297,5 +342,3 @@ echo " "
 echo -e "\033[33m"--------------------------------------"\033[0m"
 printf "\033[33m%s\n\033[0m" "for more details '~/zcp_verification/'"
 echo -e "\033[33m"--------------------------------------"\033[0m"
-
-
