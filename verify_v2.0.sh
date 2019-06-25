@@ -124,7 +124,7 @@ sed "1d" $DIR/deployment.log >> out.txt
 echo -e "\t\033[33m"=========== CHECK  Deployment ==========="\033[0m"
 deploy_error=0
 
-if [ $version == 12 ]; then
+if [ $version -le 12 ]; then
     while read line; do
         export NAME=$(echo $line | awk '{print $2;}')
         export DESIRED=$(echo $line | awk '{print $3;}')
@@ -144,7 +144,7 @@ if [ $version == 12 ]; then
         fi;
 
     done < out.txt
-elif [ $version == 13 ]; then
+elif [ $version -gt 12 ]; then
     while read line; do
         export NAME=$(echo $line | awk '{print $2;}')
         export DESIRED=$(echo $line | awk '{print $3;}' | cut -f 1 -d'/')
@@ -217,7 +217,7 @@ sed "1d" $DIR/statefulset.log >> out.txt
 
 echo -e "\t\033[33m"=============== CHECK StatefulSet ==============="\033[0m"
 sts_error=0
-if [ $version == 12 ]; then
+if [ $version -le 12 ]; then
     while read line; do
         export NAME=$(echo $line | awk '{print $2;}')
         export DESIRED=$(echo $line | awk '{print $3;}')
@@ -231,7 +231,7 @@ if [ $version == 12 ]; then
         fi;
 
     done < out.txt
-elif [ $version == 13 ]; then
+elif [ $version -gt 12 ]; then
     while read line; do
         export NAME=$(echo $line | awk '{print $2;}')
         export DESIRED=$(echo $line | awk '{print $3;}' | cut -f 1 -d'/')
