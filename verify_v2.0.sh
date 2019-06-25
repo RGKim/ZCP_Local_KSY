@@ -165,7 +165,7 @@ elif [ $version == 13 ]; then
 
     done < out.txt
 else
-    printf "%-50s\033[31m %s\n\033[0mUnsupported Kubernetes Version"
+    printf "\033[31m%s\n\033[0m" "  Unsupported Kubernetes Version"
 fi;
 echo " "
 rm -rf out.txt
@@ -246,7 +246,7 @@ elif [ $version == 13 ]; then
 
     done < out.txt
 else
-    printf "%-50s\033[31m %s\n\033[0mUnsupported Kubernetes Version"
+    printf "\033[31m%s\n\033[0m" "  Unsupported Kubernetes Version"
 fi;
 echo " "
 rm -rf out.txt
