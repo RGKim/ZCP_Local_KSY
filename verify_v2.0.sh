@@ -83,7 +83,7 @@ Secret=$(cat $DIR/secrets.log | wc -l)
 Secret=$((Secret-1))
 
 ###### DaemonSet ######
-sed "1d" $DIR/daemonset.log >> out.txt
+sed "1d" $DIR/daemonset.log > out.txt
 
 echo -e "\t\033[33m"============ CHECK  DaemonSet ============"\033[0m"
 ds_error=0
@@ -119,7 +119,7 @@ rm -rf out.txt
 
 
 ###### Deployment ###### Version Check
-sed "1d" $DIR/deployment.log >> out.txt
+sed "1d" $DIR/deployment.log > out.txt
 
 echo -e "\t\033[33m"=========== CHECK  Deployment ==========="\033[0m"
 deploy_error=0
@@ -171,7 +171,7 @@ echo " "
 rm -rf out.txt
 
 ###### Helm Release ######
-sed "1d" $DIR/helm_release.log >> out.txt
+sed "1d" $DIR/helm_release.log > out.txt
 
 echo -e "\t\033[33m"========== CHECK Helm release =========="\033[0m"
 helm_error=0
@@ -192,7 +192,7 @@ echo " "
 rm -rf out.txt
 
 ###### Job ######
-sed "1d" $DIR/job.log >> out.txt
+sed "1d" $DIR/job.log > out.txt
 
 echo -e "\t\033[33m"=================== CHECK Jobs ==================="\033[0m"
 job_error=0
@@ -213,7 +213,7 @@ echo " "
 rm -rf out.txt
 
 ###### StatefulSet ###### version check
-sed "1d" $DIR/statefulset.log >> out.txt
+sed "1d" $DIR/statefulset.log > out.txt
 
 echo -e "\t\033[33m"=============== CHECK StatefulSet ==============="\033[0m"
 sts_error=0
@@ -252,7 +252,7 @@ echo " "
 rm -rf out.txt
 
 ###### ReplicaSet ######
-sed "1d" $DIR/replicaset.log >> out.txt
+sed "1d" $DIR/replicaset.log > out.txt
 
 echo -e "\t\033[33m"================ CHECK  ReplicaSet ==============="\033[0m"
 rs_error=0
