@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import json
 import datetime
 from os.path import expanduser
@@ -16,6 +17,7 @@ DIR = home + "/" + nowdatetime
 def login(master_ip):
     os.system("cloudctl login -a https://%s:8443 --skip-ssl-validation" % master_ip)
 
+
 def version_check():
     os.system("kubectl version -o json >> version.json")
 
@@ -26,14 +28,16 @@ def version_check():
         server_version = server_string["minor"]
 
         os.system("rm -rf version.json")
-    
+
     return server_version
+
 
 def get_logs():
 
     os.system("mkdir -p %s" % DIR)
 
-    os.system("kubectl get images --all-namespaces >> %s/private_docker_registry.log" % DIR)
+    os.system(
+        "kubectl get images --all-namespaces >> %s/private_docker_registry.log" % DIR)
     os.system("cloudctl catalog charts -s >> %s/helm_chart.log" % DIR)
     os.system("kubectl get ns >> %s/namespaces.log" % DIR)
     os.system("kubectl get pod --all-namespaces >> %s/pod.log" % DIR)
@@ -49,16 +53,16 @@ def get_logs():
     os.system("kubectl get cm --all-namespaces >> %s/configmaps.log" % DIR)
     os.system("kubectl get hpa --all-namespaces >> %s/scaling_policies.log" % DIR)
     os.system("kubectl get secrets --all-namespaces >> %s/secrets.log" % DIR)
-   
+
+
 def count(log):
 
-    file= DIR+"/"+log
+    file = DIR+"/"+log
 
     log_file = open(file, 'r')
     line = log_file.read().count("\n")
 
     log_file.close()
-
 
     return line
 
@@ -75,26 +79,79 @@ def status_check():
 
 def daemonset():
     os.system("kubectl get daemonset --all-namespaces -o json > daemonset.json")
-    
+
+    ds_error = 0
+
     with open('daemonset.json') as json_file:
         json_data = json.load(json_file)
 
         len_d = len(json_data['items'])
 
+        print("\t\033[33m============ CHECK  DaemonSet ============\033[0m")
+
         for i in range(len_d):
             NAME = json_data['items'][i]['metadata']['name']
-            print(NAME)
+            DESIRED = json_data['items'][i]['status']['desiredNumberScheduled']
+            CURRENT = json_data['items'][i]['status']['currentNumberScheduled']
+            READY = json_data['items'][i]['status']['numberReady']
+            if READY == 0:
+                AVAILABLE = 0
+            else:
+                AVAILABLE = json_data['items'][i]['status']['numberAvailable']
 
-        print(len_d)
+            if DESIRED == CURRENT == READY == AVAILABLE:
+                print("%-50s\033[32m" % NAME),
+                print("%s\033[0m" % "READY")
+            else:
+                print("%-50s\033[31m" % NAME),
+                print("%s\033[0m" % "NOT READY")
+                ds_error = ds_error+1
 
-#        json_date
+    os.system("rm -rf daemonset.json")
 
-#os.system("rm -rf daemonset.json")
-    
-    
- #   print(NAME)
-# def deployment(version): version
-# def helm(): 
+    return ds_error
+
+
+def deployment(version):
+    os.system("kubectl get deployment --all-namespaces -o json > deployment.json")
+    deploy_error = 0
+
+    with open('deployment.json') as json_file:
+        json_data = json.load(json_file)
+        len_d = len(json_data['items'])
+
+        print("\t\033[33m============ CHECK  Deployment ============\033[0m")
+
+        if version <= 12:
+            for i in range(len_d):
+                NAME = json_data['items'][i]['metadata']['name']
+                DESIRED = json_data['items'][i]['status']['desiredNumberScheduled']
+                CURRENT = json_data['items'][i]['status']['currentNumberScheduled']
+                READY = json_data['items'][i]['status']['numberReady']
+                if DESIRED == CURRENT == READY:
+                    print("%-50s\033[32m" % NAME),
+                    print("%s\033[0m" % "READY")
+                else:
+                    print("%-50s\033[31m" % NAME),
+                    print("%s\033[0m" % "NOT READY")
+                    deploy_error = deploy_error+1
+        elif version > 12:
+            for i in range(len_d):
+                NAME = json_data['items'][i]['metadata']['name']
+                DESIRED = json_data['items'][i]['status']['replicas']
+                CURRENT = json_data['items'][i]['status']['updatedReplicas']
+                READY = json_data['items'][i]['status']['readyReplicas']
+                if DESIRED == CURRENT == READY:
+                    print("%-50s\033[32m" % NAME),
+                    print("%s\033[0m" % "READY")
+                else:
+                    print("%-50s\033[31m" % NAME),
+                    print("%s\033[0m" % "NOT READY")
+                    deploy_error = deploy_error+1
+
+    return deploy_error
+
+# def helm():
 # def job():
 # def statefulset(version):
 # def replicaset():
@@ -102,16 +159,13 @@ def daemonset():
 # def result()
 
 
-
 # master_ip = raw_input("Cluster Master IP: ")
 # login(master_ip)
 
 # server_version = version_check()
-
 get_logs()
-daemonset()
-
-
+version = version_check()
+deployment(version)
 
 # master_ip = raw_input("Cluster Master IP: ")
 
