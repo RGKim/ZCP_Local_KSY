@@ -97,10 +97,8 @@ while read line; do
     if [ $DESIRED == $CURRENT ]; then
         if [ $CURRENT == $READY ]; then
             if [ $READY == $AVAILABLE ]; then
-                #echo -e $(echo $line | awk '{print $2;}') is "\033[32m"READY"\033[0m";
                 printf "%-50s\033[32m %s\n\033[0m" "$NAME" "READY"
             else
-                #echo -e $(echo $line | awk '{print $2;}') is "\033[31m"NOT READY"\033[0m";
                 printf "%-50s\033[31m %s\n\033[0m" "$NAME" "NOT READY"
                 ((ds_error++));
             fi;
