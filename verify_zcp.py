@@ -87,7 +87,7 @@ def daemonset():
 
         len_d = len(json_data['items'])
 
-        print("\t\033[33m============ CHECK  DaemonSet ============\033[0m")
+        print("\033[33m%55s\033[0m" % "============ CHECK  Daemonset ============" )
 
         for i in range(len_d):
             NAME = json_data['items'][i]['metadata']['name']
@@ -100,10 +100,10 @@ def daemonset():
                 AVAILABLE = json_data['items'][i]['status']['numberAvailable']
 
             if DESIRED == CURRENT == READY == AVAILABLE:
-                print("%-50s\033[32m" % NAME),
+                print("%-60s\033[32m" % NAME),
                 print("%s\033[0m" % "READY")
             else:
-                print("%-50s\033[31m" % NAME),
+                print("%-60s\033[31m" % NAME),
                 print("%s\033[0m" % "NOT READY")
                 ds_error = ds_error+1
 
@@ -112,7 +112,7 @@ def daemonset():
     return ds_error
 
 
-def deployment(version):
+def deployment():
     os.system("kubectl get deployment --all-namespaces -o json > deployment.json")
     deploy_error = 0
 
@@ -120,35 +120,28 @@ def deployment(version):
         json_data = json.load(json_file)
         len_d = len(json_data['items'])
 
-        print("\t\033[33m============ CHECK  Deployment ============\033[0m")
+        print("\033[33m%55s\033[0m" % "============ CHECK  Deployment ============" )
+            
+        for i in range(len_d):
+            NAME = json_data['items'][i]['metadata']['name']
+            DESIRED = json_data['items'][i]['status']['replicas']
+            CURRENT = json_data['items'][i]['status']['updatedReplicas']
+            READY = json_data['items'][i]['status']['conditions'][0]['status']
 
-        if version <= 12:
-            for i in range(len_d):
-                NAME = json_data['items'][i]['metadata']['name']
-                DESIRED = json_data['items'][i]['status']['desiredNumberScheduled']
-                CURRENT = json_data['items'][i]['status']['currentNumberScheduled']
-                READY = json_data['items'][i]['status']['numberReady']
-                if DESIRED == CURRENT == READY:
-                    print("%-50s\033[32m" % NAME),
-                    print("%s\033[0m" % "READY")
-                else:
-                    print("%-50s\033[31m" % NAME),
-                    print("%s\033[0m" % "NOT READY")
-                    deploy_error = deploy_error+1
-        elif version > 12:
-            for i in range(len_d):
-                NAME = json_data['items'][i]['metadata']['name']
-                DESIRED = json_data['items'][i]['status']['replicas']
-                CURRENT = json_data['items'][i]['status']['updatedReplicas']
-                READY = json_data['items'][i]['status']['readyReplicas']
-                if DESIRED == CURRENT == READY:
-                    print("%-50s\033[32m" % NAME),
-                    print("%s\033[0m" % "READY")
-                else:
-                    print("%-50s\033[31m" % NAME),
-                    print("%s\033[0m" % "NOT READY")
-                    deploy_error = deploy_error+1
+            try:
+                AVAILABLE = json_data['items'][i]['status']['availableReplicas']
+            except:
+                AVAILABLE = 0
+                
+            if DESIRED == CURRENT == AVAILABLE:
+                print("%-60s\033[32m" % NAME),
+                print("%s\033[0m" % "READY")
+            else:
+                print("%-60s\033[31m" % NAME),
+                print("%s\033[0m" % "NOT READY")
+                deploy_error = deploy_error+1
 
+    os.system("rm -rf deployment.json")
     return deploy_error
 
 # def helm():
@@ -163,9 +156,9 @@ def deployment(version):
 # login(master_ip)
 
 # server_version = version_check()
-get_logs()
-version = version_check()
-deployment(version)
+#get_logs()
+
+deployment()
 
 # master_ip = raw_input("Cluster Master IP: ")
 
