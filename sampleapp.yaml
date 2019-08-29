@@ -234,10 +234,10 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    domainName: sockshop.zcp.com
+    domainName: sockshop2.zcp.com
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/tls-acme: "true"
-  name: frontend-ingress
+  name: frontend-ingress2
   namespace: sock-shop
 spec:
   rules:
