@@ -1,0 +1,200 @@
+Cluster Master IP: verify.sh: line 4: read: read error: 0: Input/output error
+실패
+Get https://:8443/api/v1/config: dial tcp :8443: connect: connection refused
+
+실패
+엔드포인트에 액세스할 수 없습니다. cloudctl login 명령을 사용하여 api 서버 엔드포인트를 설정하십시오.
+error: the server doesn't have a resource type "images"
+Error: remote error: tls: bad certificate
+No resources found.
+No resources found.
+No resources found.
+No resources found.
+No resources found.
+	[33m============ CHECK DaemonSet ============[0m
+calico-node                                       [32m READY
+[0mingress-nginx-controller                          [32m READY
+[0mkube-proxy                                        [32m READY
+[0mlocal-volume-provisioner                          [32m READY
+[0mnodelocaldns                                      [32m READY
+[0m 
+	[33m=========== CHECK Deployment ===========[0m
+deploy-git                                        [31m NOT READY
+[0mcert-manager                                      [31m NOT READY
+[0mcert-manager-cainjector                           [31m NOT READY
+[0mnfs-client-provisioner                            [31m NOT READY
+[0mnginx-edu00                                       [31m NOT READY
+[0mthankful-vein-tomcat                              [31m NOT READY
+[0mmariadb-edu00                                     [31m NOT READY
+[0mnginx-edu00                                       [31m NOT READY
+[0mtomcat-edu00                                      [31m NOT READY
+[0mmariadb-edu01                                     [31m NOT READY
+[0mnginx-edu01                                       [31m NOT READY
+[0mtomcat-edu01                                      [31m NOT READY
+[0mmariadb-edu02                                     [31m NOT READY
+[0mnginx-edu02                                       [31m NOT READY
+[0mtomcat-edu02                                      [31m NOT READY
+[0mmariadb-edu03                                     [31m NOT READY
+[0mnginx-edu03                                       [31m NOT READY
+[0mtomcat-edu03                                      [31m NOT READY
+[0mmariadb-edu04                                     [31m NOT READY
+[0mnginx-edu04                                       [31m NOT READY
+[0mtomcat-edu04                                      [31m NOT READY
+[0mmariadb-edu05                                     [31m NOT READY
+[0mnginx-edu05                                       [31m NOT READY
+[0mtomcat-edu05                                      [31m NOT READY
+[0mmariadb-edu06                                     [31m NOT READY
+[0mnginx-edu06                                       [31m NOT READY
+[0mtomcat-edu06                                      [31m NOT READY
+[0mmariadb-edu07                                     [31m NOT READY
+[0mnginx-edu07                                       [31m NOT READY
+[0mtomcat-edu07                                      [31m NOT READY
+[0mmariadb-edu10                                     [31m NOT READY
+[0mnginx-edu10                                       [31m NOT READY
+[0mtomcat-edu10                                      [31m NOT READY
+[0mmariadb-edu11                                     [31m NOT READY
+[0mnginx-edu11                                       [31m NOT READY
+[0mnginx-edu12                                       [31m NOT READY
+[0mmariadb-edu13                                     [31m NOT READY
+[0mnginx-edu13                                       [31m NOT READY
+[0mmariadb-edu14                                     [31m NOT READY
+[0mnginx-edu14                                       [31m NOT READY
+[0mmariadb-edu15                                     [31m NOT READY
+[0mnginx-edu15                                       [31m NOT READY
+[0mmariadb-edu17                                     [31m NOT READY
+[0mnginx-edu17                                       [31m NOT READY
+[0mtomcat-edu17                                      [31m NOT READY
+[0mmariadb-edu18                                     [31m NOT READY
+[0mnginx-edu18                                       [31m NOT READY
+[0mtomcat-edu18                                      [31m NOT READY
+[0mmariadb-edu19                                     [31m NOT READY
+[0mnginx-edu19                                       [31m NOT READY
+[0mtomcat-edu19                                      [31m NOT READY
+[0mmariadb-edu20                                     [31m NOT READY
+[0mnginx-edu20                                       [31m NOT READY
+[0mtomcat-edu20                                      [31m NOT READY
+[0mmariadb-edu21                                     [31m NOT READY
+[0mnginx-edu21                                       [31m NOT READY
+[0mtomcat-edu21                                      [31m NOT READY
+[0mmariadb-edu22                                     [31m NOT READY
+[0mnginx-edu22                                       [31m NOT READY
+[0mtomcat-edu22                                      [31m NOT READY
+[0mmariadb-edu23                                     [31m NOT READY
+[0mnginx-edu23                                       [31m NOT READY
+[0mtomcat-edu23                                      [31m NOT READY
+[0mnginx-edu24                                       [31m NOT READY
+[0mcalico-kube-controllers                           [31m NOT READY
+[0mcoredns                                           [31m NOT READY
+[0mdns-autoscaler                                    [31m NOT READY
+[0mmetrics-server                                    [31m NOT READY
+[0mtiller-deploy                                     [31m NOT READY
+[0m 
+	[33m========== CHECK Helm release ==========[0m
+ 
+	[33m=================== CHECK Jobs ===================[0m
+ 
+	[33m=============== CHECK StatefulSet ===============[0m
+ 
+	[33m================ CHECK ReplicaSet ===============[0m
+deploy-git-6bdbf6d788                                       [31m NOT READY
+[0mcert-manager-57c65cb5f5                                     [32m READY
+[0mcert-manager-cainjector-6f868ccdf6                          [32m READY
+[0mnfs-client-provisioner-5664854c6                            [32m READY
+[0mnginx-edu00-66694cd8c4                                      [31m NOT READY
+[0mthankful-vein-tomcat-5857f77969                             [31m NOT READY
+[0mmariadb-edu00-55c7bdc887                                    [32m READY
+[0mnginx-edu00-64b7c977d6                                      [32m READY
+[0mtomcat-edu00-675ccbdd88                                     [32m READY
+[0mmariadb-edu01-d66d84b77                                     [32m READY
+[0mnginx-edu01-754dd6479                                       [32m READY
+[0mtomcat-edu01-8588f57659                                     [32m READY
+[0mmariadb-edu02-765c77c8f5                                    [32m READY
+[0mnginx-edu02-755db557f6                                      [32m READY
+[0mtomcat-edu02-5588f8b94                                      [32m READY
+[0mmariadb-edu03-7fb9497d49                                    [32m READY
+[0mnginx-edu03-f7b96cb7c                                       [32m READY
+[0mtomcat-edu03-847f7795df                                     [32m READY
+[0mmariadb-edu04-749fb76f67                                    [32m READY
+[0mnginx-edu04-8cbcb558b                                       [32m READY
+[0mtomcat-edu04-c7dcb888d                                      [32m READY
+[0mmariadb-edu05-55d468997c                                    [32m READY
+[0mnginx-edu05-744bcc9779                                      [32m READY
+[0mtomcat-edu05-6775459d6c                                     [32m READY
+[0mmariadb-edu06-6bbd9c5cc5                                    [32m READY
+[0mnginx-edu06-6dd8dff856                                      [32m READY
+[0mtomcat-edu06-6ffdd479bb                                     [32m READY
+[0mmariadb-edu07-866cb46665                                    [32m READY
+[0mnginx-edu07-76cbb6d57c                                      [32m READY
+[0mtomcat-edu07-647d6cd7cc                                     [32m READY
+[0mmariadb-edu10-69449cfcd5                                    [32m READY
+[0mnginx-edu10-6869f587b9                                      [32m READY
+[0mtomcat-edu10-74ddf685b5                                     [32m READY
+[0mmariadb-edu11-55f44484f9                                    [32m READY
+[0mnginx-edu11-789bbcf7b8                                      [32m READY
+[0mnginx-edu12-55f979d545                                      [31m NOT READY
+[0mmariadb-edu13-58947f76dc                                    [32m READY
+[0mnginx-edu13-b848d8cd                                        [32m READY
+[0mmariadb-edu14-c8b76f55c                                     [32m READY
+[0mnginx-edu14-5d58cb597c                                      [32m READY
+[0mmariadb-edu15-644779b7c9                                    [32m READY
+[0mnginx-edu15-76df4888dd                                      [32m READY
+[0mmariadb-edu17-7dbf746f87                                    [32m READY
+[0mnginx-edu17-586d8bb686                                      [32m READY
+[0mtomcat-edu17-6445cf9cd4                                     [32m READY
+[0mmariadb-edu18-5f97fb7c                                      [32m READY
+[0mnginx-edu18-5d8fb99cd5                                      [32m READY
+[0mtomcat-edu18-65fb4b645                                      [31m NOT READY
+[0mmariadb-edu19-6c94fdc9ff                                    [32m READY
+[0mnginx-edu19-7996656f68                                      [32m READY
+[0mtomcat-edu19-5794f76598                                     [32m READY
+[0mmariadb-edu20-6dcf75f85f                                    [32m READY
+[0mnginx-edu20-84d7b96c84                                      [32m READY
+[0mtomcat-edu20-64fcb4975d                                     [32m READY
+[0mmariadb-edu21-7459c99f8f                                    [32m READY
+[0mnginx-edu21-58457d7dcc                                      [32m READY
+[0mtomcat-edu21-6db8d7b75c                                     [32m READY
+[0mmariadb-edu22-78ffff7bc9                                    [32m READY
+[0mnginx-edu22-577469c558                                      [32m READY
+[0mtomcat-edu22-74bfcc99b4                                     [32m READY
+[0mmariadb-edu23-6c988bbb8f                                    [32m READY
+[0mnginx-edu23-7ccff697bc                                      [32m READY
+[0mtomcat-edu23-7696b79646                                     [32m READY
+[0mnginx-edu24-7ffcc8d7d8                                      [31m NOT READY
+[0mcalico-kube-controllers-5f655b94b                           [32m READY
+[0mcoredns-56bc6b976d                                          [32m READY
+[0mdns-autoscaler-5fc5fdbf6                                    [32m READY
+[0mmetrics-server-584c6b78f                                    [32m READY
+[0mmetrics-server-c9b455c8b                                    [32m READY
+[0mtiller-deploy-586fb9f788                                    [32m READY
+[0m 
+[33m======================================[0m
+[33m  Verification Result(Resource Count)
+[0m[33m======================================[0m
+Private Docker Registry       [32m -1
+[0mHelm Chart(Catalog)           [32m 1
+[0mDaemonSet                     [32m 5
+[0mDeployment                    [32m 69
+[0mHelm Release                  [32m -1
+[0mJobs                          [32m -1
+[0mCronJob                       [32m -1
+[0mStatefulSet                   [32m -1
+[0mReplicaSet                    [32m 70
+[0mServices                      [32m 46
+[0mIngress                       [32m -1
+[0mConfigMaps                    [32m 44
+[0mScaling Policies              [32m -1
+[0mSecret                        [32m 100
+[0m 
+[33m======================================[0m
+[33m   Verification Result(Status Check)
+[0m[33m======================================[0m
+DaemonSet                     [32m OK
+[0mDeployment                    [31m NOT OK
+[0mHelm release                  [32m OK
+[0mJobs                          [32m OK
+[0mStatefulSet                   [32m OK
+[0mReplicatSet                   [31m NOT OK
+[0m 
+[33m--------------------------------------[0m
+[33mfor more details '~/zcp_verification/'
+[0m[33m--------------------------------------[0m

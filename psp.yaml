@@ -7,7 +7,7 @@ metadata:
   labels:
     addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/cluster-service: "true"
-  name: sock-shop
+  name: default
 spec:
   allowPrivilegeEscalation: true
   allowedCapabilities:
@@ -36,11 +36,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/name: sock-shop
-    app.kubernetes.io/part-of: sock-shop
+    app.kubernetes.io/name: edu20
+    app.kubernetes.io/part-of: edu20
     addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/cluster-service: "true"    
-  name: sock-shop
+  name: default
 rules:
 - apiGroups:
   - '*'
@@ -49,25 +49,25 @@ rules:
   verbs:
   - '*'
   resourceNames:
-  - sock-shop
+  - default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/name: sock-shop
-    app.kubernetes.io/part-of: sock-shop
+    app.kubernetes.io/name: edu20
+    app.kubernetes.io/part-of: edu20
     addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/cluster-service: "true"     
-  name: sock-shop
+  name: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: sock-shop
+  name: default
 subjects:
 - kind: ServiceAccount
-  name: sock-shop
-  namespace: sock-shop
+  name: default
+  namespace: default
 - kind: Group
-  name: system:serviceaccounts:sock-shop
+  name: system:serviceaccounts:default
   apiGroup: rbac.authorization.k8s.io

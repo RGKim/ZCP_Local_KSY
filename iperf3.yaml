@@ -15,7 +15,7 @@ metadata:
   name: iperf3-server
   labels:
     app: iperf3-server
-  namespace: iperf
+  namespace: iperf-server
 spec:
   containers:
     - name: iperf3-server

@@ -17,7 +17,7 @@ kind: DaemonSet
 metadata:
   labels:
     app: nginx-ingress-controller-new
-    chart: icp-nginx-ingress-3.2.0
+    chart: icp-nginx-ingress-3.1.2
     component: nginx-ingress-controller-new
     heritage: Tiller
     k8s-app: icp-nginx-ingress-controller-new
@@ -35,9 +35,9 @@ spec:
   template:
     metadata:
       annotations:
-        productID: icp-nginx-ingress-new_3.2.0_00000
+        productID: icp-nginx-ingress-new_3.1.2_00000
         productName: icp-nginx-ingress-new
-        productVersion: 3.2.0
+        productVersion: 3.1.2
         prometheus.io/port: "10254"
         prometheus.io/scrape: "true"
         scheduler.alpha.kubernetes.io/critical-pod: ""
@@ -57,7 +57,7 @@ spec:
         - --annotations-prefix=ingress.kubernetes.io
         - --enable-ssl-chain-completion
         - --enable-ssl-passthrough=true
-        - --publish-status-address=169.56.112.71
+        - --publish-status-address=169.56.74.144
         env:
         - name: POD_NAME
           valueFrom:
@@ -71,7 +71,7 @@ spec:
               fieldPath: metadata.namespace
         - name: FIPS_ENABLED
           value: "false"
-        image: zcplocal.icp:8500/ibmcom/nginx-ingress-controller:0.23.0
+        image: mycluster.icp:8500/ibmcom/nginx-ingress-controller:0.21.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -115,7 +115,7 @@ spec:
         - -c
         - sysctl -w net.core.somaxconn=32768; sysctl -w net.ipv4.ip_local_port_range="32768
           65535"
-        image: zcplocal.icp:8500/ibmcom/icp-initcontainer:1.0.0-f3
+        image: mycluster.icp:8500/ibmcom/icp-initcontainer:1.0.0-f3
         imagePullPolicy: IfNotPresent
         name: sysctl
         resources: {}
