@@ -1,0 +1,26 @@
+
+[설정 순서]
+
+1. icp elk 에서 사용하는 secret을 istio-system(ns) 으로 복사
+     kubectl get secret audit-elk-certs --namespace=kube-system --export -o yaml | kubectl apply --namespace=istio-system -f -
+
+2. Deployment fluentd-es에 위의 복사한 secret(name:certs)을 volume 및 volumeMount 설정.
+    istio-fluentd.yaml 참고
+
+3. ConfigMap fluentd-es-config 에 Elasticsearch에 필요한 cert key 경로에 맞춰서 tls 설정.
+    istio-fluentd.yaml 참고 - output.conf
+
+4. kubectl apply -f 적용
+    1. kubectl apply -f istio-fluentd.yaml
+    2. kubectl apply -f istio-log-config.yaml
+
+5. BookInfo App 여러번 호출 후 icp kibana에서 "istio-telemetry-" 로 시작하는 index확인
+    1. Kibana의 "DevTools" 메뉴 클릭
+    2. 왼쪽 api 입력 영역에서 "GET _cat/indices?v&s=index" 입력 후 초록색 삼각형 버튼 클릭
+    3. "istio-telemetry-" 로 시작하는 index 생성 여부 확인.
+
+
+[참고 Secret List - 참고자료 폴더 안에]
+
+audit-elk-certs.yaml : ELK 접속에 필요한 tls cert 정보
+istio-logentry-attribute.yaml : istio의 telemetry log attribute 예제(telemetry log 항목을 추가 할 경우)
